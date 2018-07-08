@@ -6,7 +6,6 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_title_display_name">Display name</string>
     <string name="pref_notification_message">Display message</string>
     <string name="pref_notification_message_value">It is time to drink some water!</string>
 
@@ -32,8 +31,8 @@
     <string name="pref_title_new_message_notifications">Drink water notifications</string>
 
     <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_ringtone_silent">Silent</string>
     <string name="pref_persistent_notification">Persistent notification</string>
 
     <string name="pref_title_snooze_interval">Snooze</string>
@@ -49,4 +48,6 @@
         <item>20</item>
         <item>30</item>
     </string-array>
+
+    <string name="snooze_message">Snooze</string>
 </resources>

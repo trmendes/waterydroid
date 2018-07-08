@@ -2,16 +2,6 @@
 
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue=" "
-        android:inputType="textCapWords"
-        android:key="username"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_display_name" />
-
-    <EditTextPreference
-        android:capitalize="words"
         android:defaultValue="@string/pref_notification_message_value"
         android:inputType="textCapWords"
         android:key="message_to_show"

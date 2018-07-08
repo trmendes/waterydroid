@@ -17,14 +17,38 @@
 
 package tmendes.com.waterydroid.receivers;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import java.io.IOException;
+
+import tmendes.com.waterydroid.R;
+import tmendes.com.waterydroid.helpers.AlarmHelper;
+import tmendes.com.waterydroid.helpers.NotificationHelper;
 
 public class NotifierReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        /* Post Notification */
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        //long notificationFrequency = prefs.getLong("notification_frequency", 120);
+
+        boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
+
+        if (notificationsNewMessage) {
+            String title = context.getResources().getString(R.string.app_name);
+            String messageToShow = prefs.getString("message_to_show", context.getResources().getString(R.string.pref_notification_message_value));
+            /* Notify */
+            NotificationHelper nHelper = new NotificationHelper(context);
+            @SuppressLint("ResourceType") Notification.Builder nBuilder = nHelper
+                    .getNotification(title, messageToShow, null, null);
+            nHelper.notify(System.currentTimeMillis(), nBuilder);
+        }
     }
 }

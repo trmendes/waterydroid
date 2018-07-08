@@ -24,6 +24,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.SystemClock;
 import android.util.Log;
 
 
@@ -41,21 +42,7 @@ public class AlarmHelper {
 
     private final static String ACTION_BD_NOTIFICATION = "tmendes.com.waterydroid.NOTIFICATION";
 
-    public void setAlarm(Context context, long toGoesOffAt) {
-        Calendar defaultToRingAt = Calendar.getInstance();
-
-
-        Calendar now = Calendar.getInstance();
-        defaultToRingAt.setTimeInMillis(toGoesOffAt);
-        defaultToRingAt.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = df.format(defaultToRingAt.getTime());
-        Log.i("Alarm", "Setting alarm at " + formattedDate);
-
-        toGoesOffAt = defaultToRingAt.getTimeInMillis();
-
+    public void setAlarm(Context context, long notificationFrenquency) {
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent alarmIntent = new Intent(context, NotifierReceiver.class);
@@ -67,8 +54,8 @@ public class AlarmHelper {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                toGoesOffAt,
-                INTERVAL_DAY,
+                SystemClock.elapsedRealtime() + notificationFrenquency,
+                notificationFrenquency,
                 pendingAlarmIntent);
 
         /* Restart if rebooted */
