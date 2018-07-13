@@ -22,7 +22,6 @@
         </activity>
 
         <receiver android:name=".receivers.NotifierReceiver"/>
-        <receiver android:name=".receivers.SnoozeReceiver"/>
         <receiver android:name=".receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>

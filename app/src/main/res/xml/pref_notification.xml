@@ -5,12 +5,6 @@
         android:key="notifications_new_message"
         android:title="@string/pref_title_new_message_notifications" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:dependency="notifications_new_message"
-        android:key="notifications_new_message_vibrate"
-        android:title="@string/pref_title_vibrate" />
-
     <RingtonePreference
         android:defaultValue="content://settings/system/notification_sound"
         android:dependency="notifications_new_message"
@@ -28,5 +22,14 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_notification_frequency" />
 
+    <tmendes.com.waterydroid.TimePreference
+        android:dependency="notifications_new_message"
+        android:key="pref_notification_start"
+        android:title="@string/pref_notification_start" />
+
+    <tmendes.com.waterydroid.TimePreference
+        android:dependency="notifications_new_message"
+        android:key="pref_notification_stop"
+        android:title="@string/pref_notification_stop" />
 
 </PreferenceScreen>

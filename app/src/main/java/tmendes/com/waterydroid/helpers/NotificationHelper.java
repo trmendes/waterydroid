@@ -19,10 +19,8 @@ package tmendes.com.waterydroid.helpers;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -32,8 +30,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import tmendes.com.waterydroid.R;
-import tmendes.com.waterydroid.receivers.SnoozeReceiver;
 
 public class NotificationHelper extends ContextWrapper {
     private NotificationManager notificationManager;
@@ -51,15 +51,10 @@ public class NotificationHelper extends ContextWrapper {
 
     private void createChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-            String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
-            Boolean vibrate = prefs.getBoolean("notifications_new_message_vibrate", true);
-
             NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
                     CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
-            notificationChannel.enableVibration(vibrate);
             notificationChannel.setShowBadge(true);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             getManager().createNotificationChannel(notificationChannel);
@@ -68,12 +63,9 @@ public class NotificationHelper extends ContextWrapper {
 
     public Notification.Builder getNotification(String title,
                                                 String body) {
-        PendingIntent piSnooze = PendingIntent.getBroadcast(ctx, 0, new Intent(ctx, SnoozeReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -97,7 +89,6 @@ public class NotificationHelper extends ContextWrapper {
             }
             return notification;
         } else {
-            Boolean vibrate = prefs.getBoolean("notifications_new_message_vibrate", true);
             //noinspection deprecation
             Notification.Builder notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(title)
@@ -110,13 +101,6 @@ public class NotificationHelper extends ContextWrapper {
                 notification.setShowWhen(true);
             }
 
-            if (vibrate) {
-                //noinspection deprecation
-                notification.setVibrate(new long[]  {0, 500, 1000, 1000});
-            } else {
-                //noinspection deprecation
-                notification.setVibrate(new long[] {0L});
-            }
             if (notificationsNewMessageRingtone.length() > 0) {
                 //noinspection deprecation
                 notification.setSound(Uri.parse(notificationsNewMessageRingtone));
@@ -125,8 +109,29 @@ public class NotificationHelper extends ContextWrapper {
         }
     }
 
+    private boolean shallNotify() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
+        boolean doNotDisturb = false;
+
+        long startTimestamp = prefs.getLong("pref_notification_start", 0);
+        long stopTimestamp = prefs.getLong("pref_notification_stop", 0);
+
+        if (startTimestamp > 0 && stopTimestamp > 0) {
+            Date now = Calendar.getInstance().getTime();
+            Date start = new Date(startTimestamp);
+            Date stop = new Date(stopTimestamp);
+
+            doNotDisturb = !(now.after(start) && now.before(stop));
+        }
+
+        return notificationsNewMessage && doNotDisturb;
+    }
     public void notify(long id, Notification.Builder notification) {
-        getManager().notify((int) id, notification.build());
+        if (shallNotify()) {
+            getManager().notify((int) id, notification.build());
+        }
     }
 
     private NotificationManager getManager() {
