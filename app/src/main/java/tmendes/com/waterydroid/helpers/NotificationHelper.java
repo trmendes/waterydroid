@@ -24,7 +24,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import android.media.AudioAttributes;
@@ -53,22 +53,13 @@ public class NotificationHelper extends ContextWrapper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
             String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
-            Boolean vibrate = prefs.getBoolean("pref_title_vibrate", true);
+            Boolean vibrate = prefs.getBoolean("notifications_new_message_vibrate", true);
 
             NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
                     CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
-
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                    .build();
-
-            Log.i("Bla - notificationsNewMessageRingtone", notificationsNewMessageRingtone);
-
             notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.enableVibration(vibrate);
-            notificationChannel.setSound(Uri.parse(notificationsNewMessageRingtone), audioAttributes);
             notificationChannel.setShowBadge(true);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             getManager().createNotificationChannel(notificationChannel);
@@ -76,40 +67,61 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     public Notification.Builder getNotification(String title,
-                                                String body,
-                                                Bitmap notifyPicture,
-                                                PendingIntent pI) {
+                                                String body) {
         PendingIntent piSnooze = PendingIntent.getBroadcast(ctx, 0, new Intent(ctx, SnoozeReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean notificationsPersistent = prefs.getBoolean("notifications_persistent", true);
+        String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Action action = new Notification.Action.Builder(R.drawable.ic_sync_black_24dp, ctx.getResources().getString(R.string.snooze_message), piSnooze).build();
-            return new Notification.Builder(getApplicationContext(), CHANNEL_ONE_ID)
+
+
+            Notification.Builder notification = new Notification.Builder(getApplicationContext(), CHANNEL_ONE_ID)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setColorized(true)
                     .setColor(Color.BLUE)
-                    .setContentIntent(pI)
-                    .setLargeIcon(notifyPicture)
-                    .setOngoing(notificationsPersistent)
-                    .addAction(action)
-                    .setSmallIcon(R.drawable.ic_sync_black_24dp)
+                    .setShowWhen(true)
+                    .setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_stat_local_drink)
                     .setAutoCancel(true);
+
+            if (notificationsNewMessageRingtone.length() > 0) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .build();
+                notification.setSound(Uri.parse(notificationsNewMessageRingtone), audioAttributes);
+            }
+            return notification;
         } else {
-            String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
+            Boolean vibrate = prefs.getBoolean("notifications_new_message_vibrate", true);
             //noinspection deprecation
-            return new Notification.Builder(getApplicationContext())
+            Notification.Builder notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(title)
                     .setContentText(body)
-                    .setContentIntent(pI)
-                    .setOngoing(notificationsPersistent)
-                    .setSound(Uri.parse(notificationsNewMessageRingtone))
-                    .addAction(R.drawable.ic_sync_black_24dp, ctx.getResources().getString(R.string.snooze_message), piSnooze)
-                    .setLargeIcon(notifyPicture)
-                    .setSmallIcon(R.drawable.ic_sync_black_24dp)
+                    .setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_stat_local_drink)
                     .setAutoCancel(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                notification.setShowWhen(true);
+            }
+
+            if (vibrate) {
+                //noinspection deprecation
+                notification.setVibrate(new long[]  {0, 500, 1000, 1000});
+            } else {
+                //noinspection deprecation
+                notification.setVibrate(new long[] {0L});
+            }
+            if (notificationsNewMessageRingtone.length() > 0) {
+                //noinspection deprecation
+                notification.setSound(Uri.parse(notificationsNewMessageRingtone));
+            }
+            return notification;
         }
     }
 

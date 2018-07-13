@@ -36,18 +36,18 @@ public class NotifierReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        //long notificationFrequency = prefs.getLong("notification_frequency", 120);
 
         boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
 
         if (notificationsNewMessage) {
             String title = context.getResources().getString(R.string.app_name);
             String messageToShow = prefs.getString("message_to_show", context.getResources().getString(R.string.pref_notification_message_value));
+
             /* Notify */
             NotificationHelper nHelper = new NotificationHelper(context);
             @SuppressLint("ResourceType") Notification.Builder nBuilder = nHelper
-                    .getNotification(title, messageToShow, null, null);
-            nHelper.notify(System.currentTimeMillis(), nBuilder);
+                    .getNotification(title, messageToShow);
+            nHelper.notify(1, nBuilder);
         }
     }
 }

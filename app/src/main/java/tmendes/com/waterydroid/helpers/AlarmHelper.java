@@ -26,7 +26,6 @@ import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.util.Log;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -42,6 +41,8 @@ public class AlarmHelper {
     private final static String ACTION_BD_NOTIFICATION = "tmendes.com.waterydroid.NOTIFICATION";
 
     public void setAlarm(Context context, long notificationFrenquency) {
+        long notificationFrenquencyMs = notificationFrenquency * 60000;
+
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent alarmIntent = new Intent(context, NotifierReceiver.class);
@@ -52,9 +53,11 @@ public class AlarmHelper {
                 alarmIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Log.i("AlarmHelper", "Setting Alarm Interval to: " + notificationFrenquency + " minutes");
+
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                SystemClock.elapsedRealtime() + notificationFrenquency,
-                notificationFrenquency,
+                SystemClock.elapsedRealtime() + notificationFrenquencyMs,
+                notificationFrenquencyMs,
                 pendingAlarmIntent);
 
         /* Restart if rebooted */

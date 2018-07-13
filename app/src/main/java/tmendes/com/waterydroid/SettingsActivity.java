@@ -122,12 +122,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         AlarmHelper alarm = new AlarmHelper();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String notificationFrequency = prefs.getString("notification_frequency", "5");
-        Log.i("bla", notificationFrequency);
+        int notificationFrequency = Integer.valueOf(prefs.getString("notification_frequency", "120"));
         boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
+
         alarm.cancelAlarm(this);
         if (notificationsNewMessage) {
-            alarm.setAlarm(this, Integer.valueOf(notificationFrequency));
+            alarm.setAlarm(this, notificationFrequency);
         }
     }
 
@@ -183,7 +183,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_frequency"));
-            bindPreferenceSummaryToValue(findPreference("snooze_interval"));
         }
 
         @Override
