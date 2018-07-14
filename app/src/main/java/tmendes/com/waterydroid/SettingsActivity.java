@@ -28,8 +28,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
@@ -43,11 +41,13 @@ import tmendes.com.waterydroid.helpers.AlarmHelper;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+    private AlarmHelper alarm;
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -119,8 +119,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        alarm = new AlarmHelper();
+        Log.i("bla", "onCreate");
+    }
 
-        AlarmHelper alarm = new AlarmHelper();
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        Log.i("bla", "onResume");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int notificationFrequency = Integer.valueOf(prefs.getString("notification_frequency", "120"));
         boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);

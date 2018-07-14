@@ -29,6 +29,7 @@ import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -41,7 +42,7 @@ public class NotificationHelper extends ContextWrapper {
     private static final String CHANNEL_ONE_ID = "tmendes.com.waterydroid.CHONE";
     private static final String CHANNEL_ONE_NAME = "Channel One";
 
-    private Context ctx;
+    private final Context ctx;
 
     public NotificationHelper(Context ctx) {
         super(ctx);
@@ -113,7 +114,7 @@ public class NotificationHelper extends ContextWrapper {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 
         boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
-        boolean doNotDisturb = false;
+        boolean doNotDisturbOff = true;
 
         long startTimestamp = prefs.getLong("pref_notification_start", 0);
         long stopTimestamp = prefs.getLong("pref_notification_stop", 0);
@@ -123,14 +124,32 @@ public class NotificationHelper extends ContextWrapper {
             Date start = new Date(startTimestamp);
             Date stop = new Date(stopTimestamp);
 
-            doNotDisturb = !(now.after(start) && now.before(stop));
+            if (startTimestamp <= stopTimestamp) {
+                doNotDisturbOff = (compareTimes(now, start) >= 0 && compareTimes(now, stop) <= 0);
+            } else {
+                doNotDisturbOff = (compareTimes(now, stop) >= 0 && compareTimes(now, start) <= 0);
+            }
         }
 
-        return notificationsNewMessage && doNotDisturb;
+        return notificationsNewMessage && doNotDisturbOff;
     }
+
+    /* Thanks to:
+     * https://stackoverflow.com/questions/7676149/compare-only-the-time-portion-of-two-dates-ignoring-the-date-part
+    */
+    private int compareTimes(Date d1, Date d2) {
+        int t1;
+        int t2;
+        t1 = (int) (d1.getTime() % (24*60*60*1000L));
+        t2 = (int) (d2.getTime() % (24*60*60*1000L));
+        return (t1 - t2);
+    }
+
     public void notify(long id, Notification.Builder notification) {
         if (shallNotify()) {
             getManager().notify((int) id, notification.build());
+        } else {
+            Log.i("WateryDroid", "dnd period");
         }
     }
 

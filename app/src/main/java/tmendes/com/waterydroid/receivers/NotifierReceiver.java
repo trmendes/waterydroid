@@ -24,10 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.io.IOException;
-
 import tmendes.com.waterydroid.R;
-import tmendes.com.waterydroid.helpers.AlarmHelper;
 import tmendes.com.waterydroid.helpers.NotificationHelper;
 
 public class NotifierReceiver extends BroadcastReceiver {

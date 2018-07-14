@@ -33,8 +33,8 @@ public class TimePreference extends DialogPreference {
     private final Calendar calendar;
     private TimePicker picker = null;
 
-    public TimePreference(Context ctxt) {
-        this(ctxt, null);
+    public TimePreference(Context ctx) {
+        this(ctx, null);
     }
 
     public TimePreference(Context ctxt, AttributeSet attrs) {

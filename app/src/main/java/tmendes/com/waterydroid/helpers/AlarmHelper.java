@@ -16,7 +16,6 @@
 
 package tmendes.com.waterydroid.helpers;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -26,13 +25,10 @@ import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import tmendes.com.waterydroid.receivers.BootReceiver;
 import tmendes.com.waterydroid.receivers.NotifierReceiver;
-
-import static android.app.AlarmManager.INTERVAL_DAY;
 
 public class AlarmHelper {
 
@@ -40,8 +36,8 @@ public class AlarmHelper {
 
     private final static String ACTION_BD_NOTIFICATION = "tmendes.com.waterydroid.NOTIFICATION";
 
-    public void setAlarm(Context context, long notificationFrenquency) {
-        long notificationFrenquencyMs = notificationFrenquency * 60000;
+    public void setAlarm(Context context, long notificationFrequency) {
+        long notificationFrequencyMs = TimeUnit.MINUTES.toMillis(notificationFrequency);
 
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -53,11 +49,11 @@ public class AlarmHelper {
                 alarmIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Log.i("AlarmHelper", "Setting Alarm Interval to: " + notificationFrenquency + " minutes");
+        Log.i("AlarmHelper", "Setting Alarm Interval to: " + notificationFrequency + " minutes");
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                SystemClock.elapsedRealtime() + notificationFrenquencyMs,
-                notificationFrenquencyMs,
+                SystemClock.elapsedRealtime() + notificationFrequencyMs,
+                notificationFrequencyMs,
                 pendingAlarmIntent);
 
         /* Restart if rebooted */
