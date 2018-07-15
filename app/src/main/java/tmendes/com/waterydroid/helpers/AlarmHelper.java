@@ -52,7 +52,7 @@ public class AlarmHelper {
         Log.i("AlarmHelper", "Setting Alarm Interval to: " + notificationFrequency + " minutes");
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                SystemClock.elapsedRealtime() + notificationFrequencyMs,
+                System.currentTimeMillis(),
                 notificationFrequencyMs,
                 pendingAlarmIntent);
 
@@ -72,7 +72,7 @@ public class AlarmHelper {
         PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(context,
                 0,
                 alarmIntent,
-                0);
+                PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingAlarmIntent);
 
         /* Alarm won't start again if device is rebooted */

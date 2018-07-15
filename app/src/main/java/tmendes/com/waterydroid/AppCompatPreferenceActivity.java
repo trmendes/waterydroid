@@ -16,11 +16,8 @@
 
 package tmendes.com.waterydroid;
 
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -28,8 +25,6 @@ import android.support.v7.app.AppCompatDelegate;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import tmendes.com.waterydroid.helpers.AlarmHelper;
 
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
@@ -97,20 +92,6 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     protected void onTitleChanged(CharSequence title, int color) {
         super.onTitleChanged(title, color);
         getDelegate().setTitle(title);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        getDelegate().onConfigurationChanged(newConfig);
-        AlarmHelper alarm = new AlarmHelper();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        long notificationFrequency = prefs.getLong("notification_frequency", 120);
-        boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
-        alarm.cancelAlarm(this);
-        if (notificationsNewMessage) {
-            alarm.setAlarm(this, notificationFrequency);
-        }
     }
 
     @Override

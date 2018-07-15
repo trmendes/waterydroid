@@ -120,14 +120,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         alarm = new AlarmHelper();
-        Log.i("bla", "onCreate");
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-
-        Log.i("bla", "onResume");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int notificationFrequency = Integer.valueOf(prefs.getString("notification_frequency", "120"));
         boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);

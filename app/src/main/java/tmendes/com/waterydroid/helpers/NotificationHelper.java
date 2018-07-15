@@ -121,14 +121,11 @@ public class NotificationHelper extends ContextWrapper {
 
         if (startTimestamp > 0 && stopTimestamp > 0) {
             Date now = Calendar.getInstance().getTime();
+
             Date start = new Date(startTimestamp);
             Date stop = new Date(stopTimestamp);
 
-            if (startTimestamp <= stopTimestamp) {
-                doNotDisturbOff = (compareTimes(now, start) >= 0 && compareTimes(now, stop) <= 0);
-            } else {
-                doNotDisturbOff = (compareTimes(now, stop) >= 0 && compareTimes(now, start) <= 0);
-            }
+            doNotDisturbOff = (compareTimes(now, start) >= 0 && compareTimes(now, stop) <= 0);
         }
 
         return notificationsNewMessage && doNotDisturbOff;
@@ -137,12 +134,17 @@ public class NotificationHelper extends ContextWrapper {
     /* Thanks to:
      * https://stackoverflow.com/questions/7676149/compare-only-the-time-portion-of-two-dates-ignoring-the-date-part
     */
-    private int compareTimes(Date d1, Date d2) {
-        int t1;
-        int t2;
-        t1 = (int) (d1.getTime() % (24*60*60*1000L));
-        t2 = (int) (d2.getTime() % (24*60*60*1000L));
-        return (t1 - t2);
+    private long compareTimes(Date currentTime, Date timeToRun) {
+        Calendar currentCal = Calendar.getInstance();
+        currentCal.setTime(currentTime);
+
+        Calendar runCal = Calendar.getInstance();
+        runCal.setTime(timeToRun);
+        runCal.set(Calendar.DAY_OF_MONTH, currentCal.get(Calendar.DAY_OF_MONTH));
+        runCal.set(Calendar.MONTH, currentCal.get(Calendar.MONTH));
+        runCal.set(Calendar.YEAR, currentCal.get(Calendar.YEAR));
+
+        return currentCal.getTimeInMillis() - runCal.getTimeInMillis();
     }
 
     public void notify(long id, Notification.Builder notification) {
