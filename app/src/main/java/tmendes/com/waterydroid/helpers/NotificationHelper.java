@@ -76,7 +76,7 @@ public class NotificationHelper extends ContextWrapper {
     public Notification.Builder getNotification(String title,
                                                 String body) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder notification = new Notification.Builder(getApplicationContext(), CHANNEL_ONE_ID)
+            return new Notification.Builder(getApplicationContext(), CHANNEL_ONE_ID)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setColorized(true)
@@ -85,7 +85,6 @@ public class NotificationHelper extends ContextWrapper {
                     .setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_launcher))
                     .setSmallIcon(R.drawable.ic_stat_local_drink)
                     .setAutoCancel(true);
-            return notification;
         } else {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
             String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");

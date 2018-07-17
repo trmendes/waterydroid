@@ -5,6 +5,20 @@
     <string name="pref_notification_message">Mensagem</string>
     <string name="pref_notification_message_value">Esta na hora de beber água</string>
     <string name="pref_title_notification_frequency">Frequência</string>
+    <string-array name="pref_notification_frequency_titles">
+        <item>15 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
+        <item>2 horas</item>
+        <item>3 horas</item>
+    </string-array>
+    <string-array name="pref_notification_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>189</item>
+    </string-array>
     <string name="pref_header_notifications">Notificações</string>
     <string name="pref_title_new_message_notifications">Notificações para beber água</string>
     <string name="pref_title_ringtone">Toque</string>

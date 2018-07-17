@@ -32,7 +32,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.List;
@@ -40,8 +39,6 @@ import java.util.List;
 import tmendes.com.waterydroid.helpers.AlarmHelper;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
-
-    private AlarmHelper alarm;
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -119,7 +116,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        alarm = new AlarmHelper();
+        AlarmHelper alarm = new AlarmHelper();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int notificationFrequency = Integer.valueOf(prefs.getString("notification_frequency", "120"));
         boolean notificationsNewMessage = prefs.getBoolean("notifications_new_message", true);
