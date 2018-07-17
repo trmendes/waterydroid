@@ -39,7 +39,7 @@ import tmendes.com.waterydroid.R;
 public class NotificationHelper extends ContextWrapper {
     private NotificationManager notificationManager;
 
-    private static final String CHANNEL_ONE_ID = "tmendes.com.waterydroid.CHONE";
+    private static final String CHANNEL_ONE_ID = "tmendes.com.waterydroid.CHANNELONE";
     private static final String CHANNEL_ONE_NAME = "Channel One";
 
     private final Context ctx;
@@ -52,25 +52,30 @@ public class NotificationHelper extends ContextWrapper {
 
     private void createChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
             NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
                     CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.setShowBadge(true);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            if (notificationsNewMessageRingtone.length() > 0) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .build();
+                notificationChannel.setSound(Uri.parse(notificationsNewMessageRingtone), audioAttributes);
+            }
+
             getManager().createNotificationChannel(notificationChannel);
         }
     }
 
     public Notification.Builder getNotification(String title,
                                                 String body) {
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-
             Notification.Builder notification = new Notification.Builder(getApplicationContext(), CHANNEL_ONE_ID)
                     .setContentTitle(title)
                     .setContentText(body)
@@ -80,16 +85,10 @@ public class NotificationHelper extends ContextWrapper {
                     .setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_launcher))
                     .setSmallIcon(R.drawable.ic_stat_local_drink)
                     .setAutoCancel(true);
-
-            if (notificationsNewMessageRingtone.length() > 0) {
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .build();
-                notification.setSound(Uri.parse(notificationsNewMessageRingtone), audioAttributes);
-            }
             return notification;
         } else {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            String notificationsNewMessageRingtone = prefs.getString("notifications_new_message_ringtone", "");
             //noinspection deprecation
             Notification.Builder notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(title)
